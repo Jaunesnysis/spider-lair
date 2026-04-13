@@ -7,30 +7,32 @@ Each puzzle implements a different bot-detection mechanism that must be bypassed
 
 ## Project Structure
 
+```
 spider-lair/
 ├── mysterious-passages/
-│ ├── puzzle1.py # The Door of Echoed Steps
-│ ├── puzzle2.py # The Clockwork Door
-│ ├── puzzle3.py # The Exiled Door
-│ ├── rate*test_puzzle1.py
-│ ├── rate_test_puzzle2.py
-│ └── *\_result.html # Proof of success
+│   ├── puzzle1.py              # The Door of Echoed Steps
+│   ├── puzzle2.py              # The Clockwork Door
+│   ├── puzzle3.py              # The Exiled Door
+│   ├── rate_test_puzzle1.py
+│   ├── rate_test_puzzle2.py
+│   └── *_result.html           # Proof of success
 ├── curious-reflections/
-│ ├── puzzle1.py # The Fractured Mirror
-│ ├── puzzle2.py # The Silver Veil
-│ ├── puzzle3.py # The Mirrored Gaze
-│ ├── rate*test_puzzle1.py
-│ ├── rate_test_puzzle2.py
-│ ├── rate_test_puzzle3.py
-│ └── *\_result.html
+│   ├── puzzle1.py              # The Fractured Mirror
+│   ├── puzzle2.py              # The Silver Veil
+│   ├── puzzle3.py              # The Mirrored Gaze
+│   ├── rate_test_puzzle1.py
+│   ├── rate_test_puzzle2.py
+│   ├── rate_test_puzzle3.py
+│   └── *_result.html
 ├── shattered-thresholds/
-│ ├── puzzle1.py # The Sleeping Vault
-│ ├── puzzle2.py # The Verity Gate
-│ ├── rate_test_puzzle1.py
-│ ├── rate_test_puzzle2.py
-│ └── \*\_result.html
+│   ├── puzzle1.py              # The Sleeping Vault
+│   ├── puzzle2.py              # The Verity Gate
+│   ├── rate_test_puzzle1.py
+│   ├── rate_test_puzzle2.py
+│   └── *_result.html
 ├── requirements.txt
 └── README.md
+```
 
 ---
 
