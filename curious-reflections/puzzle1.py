@@ -3,11 +3,8 @@ from playwright.sync_api import sync_playwright
 # Puzzle 1: The Fractured Mirror
 # URL: https://bo7.online/the_fractured_mirror
 #
-# MECHANISM: TLS/JA3 fingerprint detection
-# The server checks the TLS fingerprint of the client.
-# Python requests, curl, and headless Chromium all fail.
-# Only real Chrome passes the check.
-# SOLUTION: Use Playwright with channel="chrome" (real Chrome, not Chromium)
+# TLS/JA3 fingerprint detection
+# SOLUTION: Use Playwright with channel="chrome" 
 
 with sync_playwright() as p:
     browser = p.chromium.launch(

@@ -3,10 +3,9 @@ from playwright.sync_api import sync_playwright
 # Puzzle 3: The Mirrored Gaze
 # URL: https://bo7.online/the_mirrored_gaze
 #
-# MECHANISM: TLS/JA3 fingerprint detection - specifically requires Firefox
-# "The right eyes" = Firefox's unique TLS fingerprint
-# Chrome, Safari, Python requests all fail - only Firefox passes
-# SOLUTION: Use Playwright with Firefox engine
+# TLS/JA3 fingerprint detection - specifically requires Firefo
+# Chrome, Safari  requests all fail - only Firefox passes
+# Use Playwright with Firefox engine
 
 with sync_playwright() as p:
     browser = p.firefox.launch(headless=True)

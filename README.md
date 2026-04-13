@@ -12,15 +12,22 @@ spider-lair/
 │ ├── puzzle1.py # The Door of Echoed Steps
 │ ├── puzzle2.py # The Clockwork Door
 │ ├── puzzle3.py # The Exiled Door
-│ └── _\_result.html # Proof of success
+│ ├── rate*test_puzzle1.py
+│ ├── rate_test_puzzle2.py
+│ └── *\_result.html # Proof of success
 ├── curious-reflections/
 │ ├── puzzle1.py # The Fractured Mirror
 │ ├── puzzle2.py # The Silver Veil
 │ ├── puzzle3.py # The Mirrored Gaze
-│ └── _\_result.html
+│ ├── rate*test_puzzle1.py
+│ ├── rate_test_puzzle2.py
+│ ├── rate_test_puzzle3.py
+│ └── *\_result.html
 ├── shattered-thresholds/
 │ ├── puzzle1.py # The Sleeping Vault
 │ ├── puzzle2.py # The Verity Gate
+│ ├── rate_test_puzzle1.py
+│ ├── rate_test_puzzle2.py
 │ └── \*\_result.html
 ├── requirements.txt
 └── README.md
@@ -54,14 +61,21 @@ playwright install chromium firefox webkit chrome
 **URL:** `https://bo7.online/the_door_of_echoed_steps`
 
 **Mechanism:** Cookie-based authentication. The server sets a session
-cookie (`wormhole_token=galactic-cookie-42`) on the homepage. The puzzle
-page requires this cookie to be present.
+cookie (`wormhole_token=galactic-cookie-42`) on the homepage.
 
 **Solution:** Use a `requests.Session` to visit the homepage first,
 which automatically carries the cookie to subsequent requests.
 
+**Rate test results:**
+
+- 1 req/s → 10/10 success
+- 2 req/s → 10/10 success
+- 5 req/s → 10/10 success
+- Solution is resilient at all tested rates.
+
 ```bash
 python mysterious-passages/puzzle1.py
+python mysterious-passages/rate_test_puzzle1.py
 ```
 
 ---
@@ -70,12 +84,23 @@ python mysterious-passages/puzzle1.py
 
 **URL:** `https://bo7.online/the_clockwork_door`
 
-**Mechanism:** Same cookie-based authentication as Puzzle 1.
+**Mechanism:** Rate limiting + cookie-based authentication. The server
+sets a cookie on the homepage and enforces a request rate limit —
+returning 429 Too Many Requests after ~5 requests".
 
-**Solution:** Same session cookie approach — visit homepage first.
+**Solution:** Visit homepage first to get session cookie, then use
+use waiting in case 429 is received.
+
+**Rate test results:**
+
+- 1 req/s → 5/10 success, then 429s after ~5 requests
+- 2 req/s → 0/10 success, all 429s
+- 5 req/s → 0/10 success, all 429s
+- Server enforces strict rate limiting
 
 ```bash
 python mysterious-passages/puzzle2.py
+python mysterious-passages/rate_test_puzzle2.py
 ```
 
 ---
@@ -85,21 +110,20 @@ python mysterious-passages/puzzle2.py
 **URL:** `https://bo7.online/the_exiled_door`
 
 **Mechanism:** Geo-IP blocking. The server only allows requests
-originating from Mexico (MX). This was identified via the response
-header `request-country-is-mx: False`.
+originating from Mexico (MX). Identified via response header
+`request-country-is-mx: False`. Server performs server-side geo-lookup
+and ignores all spoofed headers (`X-Forwarded-For`, `X-Real-IP`,
+`CF-IPCountry`, etc.).
 
-**Attempts made:**
+**Solution:** Route requests through a Mexican HTTPS proxy.
+Find fresh MX proxies at (https://free-proxy-list.net)
 
-- Spoofed headers (`X-Forwarded-For`, `X-Real-IP`, `CF-IPCountry`, etc.) — server ignores all
-- Mexican public proxies — all dead or too slow for HTTPS
-- curl (different JA3) — still blocked
-- Checked informational pages for hints — no bypass found
+**Rate test results:**
 
-**Conclusion:** Requires a real Mexican IP address (paid VPN/proxy
-with MX exit node). The server performs server-side geo-lookup and
-trusts no client-sent headers.
-
-**Status:** ⚠️ Unsolved — requires paid Mexican VPN/proxy
+- Rate tests not written for this puzzle — free Mexican proxies die
+  within minutes of being listed. The proxy used to solve the puzzle
+  was already dead by the time rate testing could be performed.
+- However proof of successful solve is saved in `puzzle3_result.html`
 
 ```bash
 python mysterious-passages/puzzle3.py
@@ -117,14 +141,21 @@ and only allows specific browser fingerprints through.
 
 **URL:** `https://bo7.online/the_fractured_mirror`
 
-**Mechanism:** TLS fingerprint check — only accepts Chrome's TLS fingerprint.
-Python `requests`, curl, headless Chromium, and Safari all fail.
+**Mechanism:** TLS fingerprint check — only accepts Chrome's TLS
+fingerprint. Safari fails.
 
-**Solution:** Use Playwright with `channel="chrome"` which uses the
-real Chrome binary and its authentic TLS fingerprint.
+**Solution:** Use Playwright with `channel="chrome"` and
+`headless=False` — real Chrome binary with authentic TLS fingerprint.
+
+**Rate test results:**
+
+- 1 req/s → 5/5 success
+- 2 req/s → 5/5 success
+- 5 req/s → 5/5 success
 
 ```bash
 python curious-reflections/puzzle1.py
+python curious-reflections/rate_test_puzzle1.py
 ```
 
 ---
@@ -133,12 +164,21 @@ python curious-reflections/puzzle1.py
 
 **URL:** `https://bo7.online/the_silver_veil`
 
-**Mechanism:** Same TLS fingerprint check as Puzzle 1 — requires Chrome.
+**Mechanism:** TLS fingerprint check — requires Chrome's TLS
+fingerprint.
 
-**Solution:** Same approach — Playwright with real Chrome.
+**Solution:** Playwright with real Chrome (`channel="chrome"`),
+`headless=True` sufficient.
+
+**Rate test results:**
+
+- 1 req/s → 5/5 success
+- 2 req/s → 5/5 success
+- 5 req/s → 5/5 success
 
 ```bash
 python curious-reflections/puzzle2.py
+python curious-reflections/rate_test_puzzle2.py
 ```
 
 ---
@@ -148,13 +188,20 @@ python curious-reflections/puzzle2.py
 **URL:** `https://bo7.online/the_mirrored_gaze`
 
 **Mechanism:** TLS fingerprint check — specifically requires Firefox's
-TLS fingerprint. Chrome, Safari, and Python all fail.
-"The right eyes" = Firefox's unique TLS signature.
+TLS fingerprint. Chrome, Safari all fail.
+Firefox's unique TLS signature needed.
 
-**Solution:** Use Playwright with Firefox engine.
+**Solution:** Use Playwright with Firefox engine (`headless=True`).
+
+**Rate test results:**
+
+- 1 req/s → 5/5 success
+- 2 req/s → 5/5 success
+- 5 req/s → 5/5 success
 
 ```bash
 python curious-reflections/puzzle3.py
+python curious-reflections/rate_test_puzzle3.py
 ```
 
 ---
@@ -165,14 +212,20 @@ python curious-reflections/puzzle3.py
 
 **URL:** `https://bo7.online/the_sleeping_vault`
 
-**Mechanism:** JavaScript execution required. The page renders
-nothing meaningful without JS — the door only opens after
-client-side scripts run.
+**Mechanism:** JavaScript execution required. The page renders nothing
+meaningful without JS — the door only opens after client-side scripts run.
 
 **Solution:** Use Playwright with Chrome to fully execute JS.
 
+**Rate test results:**
+
+- 1 req/s → 5/5 success
+- 2 req/s → 5/5 success
+- 5 req/s → 5/5 success
+
 ```bash
 python shattered-thresholds/puzzle1.py
+python shattered-thresholds/rate_test_puzzle1.py
 ```
 
 ---
@@ -193,25 +246,13 @@ python shattered-thresholds/puzzle1.py
 **Solution:** Use Playwright WebKit and remove the `webdriver` flag
 via `add_init_script` before page load.
 
+**Rate test results:**
+
+- 1 req/s → 5/5 success
+- 2 req/s → 5/5 success
+- 5 req/s → 5/5 success
+
 ```bash
 python shattered-thresholds/puzzle2.py
+python shattered-thresholds/rate_test_puzzle2.py
 ```
-
----
-
-## Key Takeaways
-
-| Technique                           | Puzzles                   |
-| ----------------------------------- | ------------------------- |
-| Session cookies                     | Mysterious Passages 1 & 2 |
-| Geo-IP blocking                     | Mysterious Passages 3     |
-| TLS/JA3 fingerprinting              | All Curious Reflections   |
-| JS execution required               | Shattered Thresholds 1    |
-| JS bot detection (`webdriver` flag) | Shattered Thresholds 2    |
-
-## Tools Used
-
-- `requests` — simple HTTP client with session support
-- `playwright` — browser automation (Chrome, Firefox, WebKit)
-- `curl_cffi` — TLS fingerprint impersonation (tested, insufficient)
-- `beautifulsoup4` — HTML parsing

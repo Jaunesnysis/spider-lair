@@ -3,9 +3,9 @@ from playwright.sync_api import sync_playwright
 # Puzzle 2: The Verity Gate
 # URL: https://bo7.online/the_verity_gate
 #
-# MECHANISM: JS checks that claimed browser (User-Agent) matches actual
+# JS checks that claimed browser (User-Agent) matches actual
 # detected engine, AND checks navigator.webdriver is not true.
-# SOLUTION: Use WebKit + remove webdriver flag via init script
+# Use WebKit + remove webdriver flag via init script
 
 with sync_playwright() as p:
     browser = p.webkit.launch(headless=True)

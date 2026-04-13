@@ -11,7 +11,6 @@ headers = {
 
 mexican_proxies = [
     "201.159.97.25:8081",
-    # paste more here
 ]
 
 for proxy_addr in mexican_proxies:

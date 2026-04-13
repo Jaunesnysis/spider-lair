@@ -2,8 +2,8 @@ import requests
 
 # Puzzle 1: The Door of Echoed Steps
 # The door checks for a cookie ("ancient token") set by the homepage.
-# Solution: use a Session to visit the homepage first, which sets the
-# required cookie (wormhole_token=galactic-cookie-42), then visit the puzzle.
+# use a Session to visit the homepage first, which sets the
+# required cookie then visit the puzzle.
 
 url = "https://bo7.online/the_door_of_echoed_steps"
 
@@ -15,10 +15,10 @@ headers = {
 
 session = requests.Session()
 
-# Step 1: visit homepage to receive the cookie
+# visit homepage to receive the cookie
 session.get("https://bo7.online/", headers=headers)
 
-# Step 2: visit puzzle page with cookie in session
+#visit puzzle page with cookie in session
 headers["Referer"] = "https://bo7.online/"
 response = session.get(url, headers=headers)
 

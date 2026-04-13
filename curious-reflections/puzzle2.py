@@ -3,10 +3,8 @@ from playwright.sync_api import sync_playwright
 # Puzzle 2: The Silver Veil
 # URL: https://bo7.online/the_silver_veil
 #
-# MECHANISM: TLS/JA3 fingerprint detection (same as Fractured Mirror)
-# The server checks the TLS fingerprint of the client.
-# SOLUTION: Use Playwright with channel="chrome" (real Chrome TLS fingerprint)
-# Works in both headless and non-headless mode.
+#  TLS/JA3 fingerprint detection (same as Fractured Mirror)
+# Use Playwright with channel="chrome" 
 
 with sync_playwright() as p:
     browser = p.chromium.launch(headless=True, channel="chrome")
